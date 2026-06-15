@@ -68,9 +68,19 @@
   .browser-bar i:nth-child(3){background:#28c840}
   .url { margin-left:10px; background:#fff; border:1px solid var(--linha); border-radius:20px; padding:3px 14px; font-size:.74rem; color:var(--cinza); flex:1; }
   .screen { background:#fff; padding:26px 26px 92px; min-height:175px; position:relative; }
-  .shot img { display:block; width:100%; height:auto; }
+  .shot img { display:block; width:100%; height:auto; image-rendering:auto; }
   a.shot { text-decoration:none; }
   a.shot:hover { box-shadow:0 4px 16px rgba(241,90,43,.25); }
+
+  /* busca do Google recriada em vetor (qualidade perfeita em qualquer tela) */
+  .glogo { font-family:"Arial","Segoe UI",sans-serif; font-size:clamp(40px,9vw,64px); font-weight:500; text-align:center; letter-spacing:-2px; margin:6px 0 30px; line-height:1; }
+  .gsearch-row { display:flex; gap:12px; align-items:center; justify-content:center; }
+  .gsearchbox { position:relative; flex:1; max-width:540px; display:flex; align-items:center; gap:12px; border:2px solid var(--laranja); border-radius:28px; padding:12px 20px; box-shadow:0 1px 6px rgba(32,33,36,.12); }
+  .gplus { color:#5f6368; font-size:1.35rem; line-height:1; }
+  .gquery { flex:1; color:#202124; font-size:1.05rem; }
+  .gx { color:#70757a; font-size:.95rem; }
+  .gia { border:1px solid #dadce0; border-radius:20px; padding:9px 15px; color:#3c4043; font-size:.85rem; white-space:nowrap; background:#f8f9fa; }
+  @media (max-width:560px){ .gia{display:none;} .gsearchbox{max-width:none;} }
 
   .gline { height:12px; background:#eef1f5; border-radius:6px; margin:9px 0; }
   .gline.s{width:45%} .gline.m{width:70%} .gline.l{width:90%}
@@ -213,7 +223,19 @@
         </div>
         <a class="hot shot" href="https://business.google.com" target="_blank" style="display:block;">
           <div class="browser-bar"><i></i><i></i><i></i><span class="url">google.com</span></div>
-          <img src="gbp-base.png" alt="Busca do Google por dentista, exemplo do Perfil da Empresa">
+          <div class="screen" style="padding:40px 26px 96px;">
+            <div class="glogo"><span style="color:#4285F4">G</span><span style="color:#EA4335">o</span><span style="color:#FBBC04">o</span><span style="color:#4285F4">g</span><span style="color:#34A853">l</span><span style="color:#EA4335">e</span></div>
+            <div class="gsearch-row">
+              <div class="gsearchbox">
+                <span class="gplus">+</span>
+                <span class="gquery">dentista</span>
+                <span class="gx">✕</span>
+                <div class="spot" style="top:-9px;left:-9px;right:-9px;bottom:-9px;border-radius:28px;"></div>
+                <span class="tip">Neste exemplo, vou usar a busca do Google e pesquisar por "dentista" para exemplificar</span>
+              </div>
+              <div class="gia">◈ Modo IA</div>
+            </div>
+          </div>
         </a>
       </div>
 
