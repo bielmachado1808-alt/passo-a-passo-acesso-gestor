@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Como conceder acesso a um gestor no Perfil da Empresa no Google</title>
+<style>
+  :root {
+    --tango: #2567ec;
+    --texto: #1c2b3a;
+    --cinza: #6b7785;
+    --linha: #e6e9ee;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: "Inter", "Segoe UI", Roboto, Arial, sans-serif;
+    background: #eef1f6;
+    color: var(--texto);
+    line-height: 1.55;
+    min-height: 100vh;
+    display: flex; flex-direction: column;
+  }
+
+  /* ---- top bar ---- */
+  .topbar {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 14px 26px;
+    background: #fff;
+    border-bottom: 1px solid var(--linha);
+  }
+  .tango-logo { display: flex; align-items: center; gap: 8px; font-weight: 700; color: var(--tango); font-size: 1.05rem; }
+  .tango-logo .dot { width: 22px; height: 22px; border-radius: 7px; background: var(--tango); display:inline-flex; align-items:center; justify-content:center; color:#fff; font-size:.8rem; }
+  .doc-title { font-size: .92rem; font-weight: 600; color: var(--texto); max-width: 60%; text-align: right; }
+
+  /* ---- progress ---- */
+  .progress-wrap { background:#fff; padding: 0 26px 14px; }
+  .progress-meta { display:flex; justify-content:space-between; font-size:.8rem; color:var(--cinza); margin-bottom:6px; }
+  .progress { height:6px; background:#e6e9ee; border-radius:6px; overflow:hidden; }
+  .progress-bar { height:100%; width:0; background:var(--tango); border-radius:6px; transition: width .3s ease; }
+
+  /* ---- stage ---- */
+  .stage { flex:1; display:flex; align-items:center; justify-content:center; padding:30px 18px; }
+  .card {
+    width: 100%; max-width: 720px;
+    background:#fff; border-radius:16px;
+    box-shadow:0 8px 34px rgba(18,38,63,.10);
+    padding: 30px 32px 34px;
+  }
+  .step { display:none; animation: fade .25s ease; }
+  .step.active { display:block; }
+  @keyframes fade { from{opacity:0; transform:translateY(8px);} to{opacity:1; transform:none;} }
+
+  .step-head { display:flex; align-items:flex-start; gap:14px; margin-bottom:18px; }
+  .step-num {
+    flex:0 0 auto; width:34px; height:34px;
+    background:var(--tango); color:#fff; border-radius:9px;
+    display:flex; align-items:center; justify-content:center; font-weight:700;
+  }
+  .step-text { font-size:1.12rem; padding-top:3px; }
+  .step-text b { font-weight:700; }
+  .sub { display:block; margin-top:6px; font-size:.9rem; color:var(--cinza); }
+
+  /* ---- simulated screenshots ---- */
+  .shot { border:1px solid var(--linha); border-radius:12px; overflow:hidden; box-shadow:0 2px 10px rgba(18,38,63,.06); position:relative; }
+  .browser-bar { background:#f1f3f6; padding:8px 12px; display:flex; align-items:center; gap:7px; border-bottom:1px solid var(--linha); }
+  .browser-bar i { width:11px; height:11px; border-radius:50%; display:inline-block; }
+  .browser-bar i:nth-child(1){background:#ff5f57}
+  .browser-bar i:nth-child(2){background:#febc2e}
+  .browser-bar i:nth-child(3){background:#28c840}
+  .url { margin-left:10px; background:#fff; border:1px solid var(--linha); border-radius:20px; padding:3px 14px; font-size:.74rem; color:var(--cinza); flex:1; }
+  .screen { background:#fff; padding:26px; min-height:150px; position:relative; }
+
+  .gline { height:12px; background:#eef1f5; border-radius:6px; margin:9px 0; }
+  .gline.s{width:45%} .gline.m{width:70%} .gline.l{width:90%}
+  .gtab { display:inline-block; padding:6px 14px; border-radius:8px; background:#f1f3f6; color:var(--cinza); font-size:.82rem; margin-right:8px; }
+  .gbtn { display:inline-block; padding:8px 18px; border-radius:20px; background:var(--tango); color:#fff; font-size:.85rem; font-weight:600; }
+  .gmenu { font-size:1.4rem; color:var(--cinza); }
+  .ginput { border:1px solid var(--linha); border-radius:8px; padding:10px 12px; font-size:.85rem; color:var(--cinza); }
+  .grow { display:flex; align-items:center; gap:10px; }
+  .gchip { padding:6px 12px; border:1px solid var(--linha); border-radius:8px; font-size:.82rem; }
+  .gchip.sel { border-color:var(--tango); background:#eef3fe; color:var(--tango); font-weight:600; }
+
+  .spot { position:absolute; border:3px solid var(--tango); border-radius:10px; box-shadow:0 0 0 4px rgba(37,103,236,.18); pointer-events:none; animation: pulse 1.6s infinite; }
+  .spot.circle { border-radius:50%; }
+  @keyframes pulse { 0%,100%{box-shadow:0 0 0 4px rgba(37,103,236,.18);} 50%{box-shadow:0 0 0 9px rgba(37,103,236,.05);} }
+
+  .hot { position:relative; display:inline-block; text-decoration:none; color:inherit; cursor:pointer; }
+  .hot:hover .gbtn { background:#1850c4; }
+  .hint { display:block; margin-top:12px; font-size:.82rem; color:var(--tango); font-weight:600; }
+  .hint::before { content:"👆 "; }
+
+  .callout { margin-top:16px; padding:12px 16px; border-radius:10px; font-size:.88rem; }
+  .callout.warn { background:#fff7e6; border:1px solid #ffe2a8; color:#8a6100; }
+  .callout.info { background:#eef3fe; border:1px solid #c4d6fb; color:var(--tango); }
+  .callout.done { background:#e8f6ec; border:1px solid #b6e3c2; color:#1f7a3d; }
+
+  /* ---- nav ---- */
+  .nav { background:#fff; border-top:1px solid var(--linha); padding:14px 26px; display:flex; align-items:center; justify-content:space-between; }
+  .nav button {
+    font-family:inherit; font-size:.92rem; font-weight:600;
+    padding:10px 22px; border-radius:24px; border:none; cursor:pointer;
+  }
+  .btn-back { background:#f1f3f6; color:var(--texto); }
+  .btn-back:disabled { opacity:.4; cursor:not-allowed; }
+  .btn-next { background:var(--tango); color:#fff; }
+  .dots { display:flex; gap:7px; }
+  .dots span { width:9px; height:9px; border-radius:50%; background:#d4d9e1; cursor:pointer; transition:background .2s; }
+  .dots span.on { background:var(--tango); transform:scale(1.15); }
+
+  /* ===== RESPONSIVO ===== */
+
+  /* tablets */
+  @media (max-width: 768px){
+    .topbar { padding: 12px 18px; }
+    .progress-wrap { padding: 0 18px 12px; }
+    .stage { padding: 22px 14px; }
+    .card { padding: 26px 24px 30px; }
+    .step-text { font-size: 1.05rem; }
+    .doc-title { max-width: 50%; font-size: .85rem; }
+  }
+
+  /* celulares */
+  @media (max-width: 560px){
+    .doc-title { display: none; }
+    .topbar { padding: 11px 16px; }
+    .progress-wrap { padding: 0 16px 10px; }
+    .stage { padding: 16px 12px; align-items: flex-start; }
+    .card { padding: 20px 16px 24px; border-radius: 14px; }
+    .step-head { gap: 10px; margin-bottom: 14px; }
+    .step-num { width: 30px; height: 30px; font-size: .9rem; }
+    .step-text { font-size: 1rem; }
+    .sub { font-size: .85rem; }
+    .screen { padding: 18px; min-height: 120px; }
+    .url { font-size: .68rem; padding: 3px 10px; }
+    .hint { font-size: .8rem; }
+    .callout { font-size: .84rem; padding: 10px 13px; }
+
+    /* navegação adaptada ao toque */
+    .nav { padding: 11px 14px; gap: 8px; }
+    .nav button { padding: 11px 16px; font-size: .88rem; }
+    .dots span { width: 8px; height: 8px; }
+  }
+
+  /* celulares pequenos */
+  @media (max-width: 360px){
+    .nav button { padding: 10px 12px; font-size: .82rem; }
+    .nav .dots { gap: 5px; }
+    .step-text { font-size: .95rem; }
+  }
+
+  /* telas largas: limita a altura da área do print pra não esticar demais */
+  @media (min-width: 1100px){
+    .card { max-width: 760px; }
+  }
+
+  /* altura real em mobile (barra de endereço do navegador) */
+  @supports (height: 100dvh){
+    body { min-height: 100dvh; }
+  }
+
+  /* respeita quem prefere menos animação */
+  @media (prefers-reduced-motion: reduce){
+    .spot { animation: none; }
+    .step { animation: none; }
+  }
+</style>
+</head>
+<body>
+
+  <div class="topbar">
+    <div class="tango-logo"><span class="dot">T</span> Tango</div>
+    <div class="doc-title">Conceder acesso a um gestor no Perfil da Empresa no Google</div>
+  </div>
+
+  <div class="progress-wrap">
+    <div class="progress-meta">
+      <span id="stepLabel">Etapa 1 de 5</span>
+      <span>Google Business Profile</span>
+    </div>
+    <div class="progress"><div class="progress-bar" id="bar"></div></div>
+  </div>
+
+  <div class="stage">
+    <div class="card">
+
+      <!-- STEP 1 -->
+      <div class="step active">
+        <div class="step-head">
+          <div class="step-num">1</div>
+          <div class="step-text">Acesse <b>business.google.com</b> e faça login com a conta <b>dona</b> do perfil.
+            <span class="sub">Se você gerencia mais de uma empresa, clique na que deseja editar.</span>
+          </div>
+        </div>
+        <div class="shot">
+          <div class="browser-bar"><i></i><i></i><i></i><span class="url">business.google.com</span></div>
+          <div class="screen">
+            <div class="gline l"></div>
+            <div class="gline m"></div>
+            <a class="hot" href="https://business.google.com" target="_blank" style="margin-top:18px;">
+              <span class="gbtn">Fazer login</span>
+              <div class="spot" style="top:-7px;left:-7px;right:-7px;bottom:-7px;"></div>
+            </a>
+          </div>
+        </div>
+        <span class="hint">Clique para abrir business.google.com</span>
+      </div>
+
+      <!-- STEP 2 -->
+      <div class="step">
+        <div class="step-head">
+          <div class="step-num">2</div>
+          <div class="step-text">Abra o menu <b>⋮ Mais</b> e clique em <b>Configurações do perfil da empresa</b>.</div>
+        </div>
+        <div class="shot">
+          <div class="browser-bar"><i></i><i></i><i></i><span class="url">business.google.com/dashboard</span></div>
+          <div class="screen">
+            <div class="grow" style="justify-content:space-between;">
+              <div class="gline s" style="margin:0;"></div>
+              <a class="hot" href="https://business.google.com" target="_blank">
+                <span class="gmenu">⋮</span>
+                <div class="spot circle" style="top:-9px;left:-12px;width:40px;height:40px;"></div>
+              </a>
+            </div>
+            <div class="gline l"></div>
+            <div class="gline m"></div>
+          </div>
+        </div>
+        <span class="hint">Clique para abrir o painel da empresa</span>
+      </div>
+
+      <!-- STEP 3 -->
+      <div class="step">
+        <div class="step-head">
+          <div class="step-num">3</div>
+          <div class="step-text">No painel de configurações, clique em <b>Pessoas e acesso</b>.</div>
+        </div>
+        <div class="shot">
+          <div class="browser-bar"><i></i><i></i><i></i><span class="url">business.google.com · Configurações</span></div>
+          <div class="screen">
+            <div class="gtab">Perfil</div>
+            <a class="hot" href="https://business.google.com" target="_blank">
+              <span class="gtab" style="background:#eef3fe;color:var(--tango);">Pessoas e acesso</span>
+              <div class="spot" style="top:-7px;left:-7px;right:-7px;bottom:-7px;"></div>
+            </a>
+            <div class="gline l" style="margin-top:20px;"></div>
+            <div class="gline m"></div>
+          </div>
+        </div>
+        <span class="hint">Clique para abrir "Pessoas e acesso"</span>
+      </div>
+
+      <!-- STEP 4 -->
+      <div class="step">
+        <div class="step-head">
+          <div class="step-num">4</div>
+          <div class="step-text">Clique em <b>Adicionar</b> e digite o <b>e-mail (Gmail)</b> do gestor.</div>
+        </div>
+        <div class="shot">
+          <div class="browser-bar"><i></i><i></i><i></i><span class="url">Pessoas e acesso</span></div>
+          <div class="screen">
+            <div class="grow" style="justify-content:space-between;margin-bottom:16px;">
+              <b style="font-size:.9rem;">Pessoas com acesso</b>
+              <a class="hot" href="https://business.google.com" target="_blank">
+                <span class="gbtn">＋ Adicionar</span>
+                <div class="spot" style="top:-7px;left:-7px;right:-7px;bottom:-7px;"></div>
+              </a>
+            </div>
+            <div class="ginput">gestor@gmail.com</div>
+          </div>
+        </div>
+        <span class="hint">Clique no botão "Adicionar"</span>
+      </div>
+
+      <!-- STEP 5 -->
+      <div class="step">
+        <div class="step-head">
+          <div class="step-num">5</div>
+          <div class="step-text">Escolha a função <b>Gerente</b> e clique em <b>Convidar</b>.
+            <span class="sub">"Gerente" deixa o gestor editar tudo, mas sem poder remover o perfil ou o dono — é a opção ideal.</span>
+          </div>
+        </div>
+        <div class="shot">
+          <div class="browser-bar"><i></i><i></i><i></i><span class="url">Adicionar pessoa</span></div>
+          <div class="screen">
+            <div class="ginput" style="margin-bottom:14px;">gestor@gmail.com</div>
+            <div class="grow" style="margin-bottom:18px;">
+              <a class="hot" href="https://business.google.com" target="_blank">
+                <span class="gchip sel">Gerente</span>
+                <div class="spot" style="top:-7px;left:-7px;right:-7px;bottom:-7px;"></div>
+              </a>
+              <span class="gchip">Proprietário</span>
+            </div>
+            <a class="hot" href="https://business.google.com" target="_blank"><span class="gbtn">Convidar</span></a>
+          </div>
+        </div>
+        <span class="hint">Selecione "Gerente" e clique em "Convidar"</span>
+        <div class="callout warn">⚠️ O gestor recebe um <b>e-mail de convite</b> e precisa <b>aceitar</b> para o acesso ficar ativo. Peça para ele conferir a caixa de entrada (e o spam).</div>
+        <div class="callout done">✅ <b>Pronto!</b> O gestor terá acesso ao perfil. Você pode alterar ou remover a permissão a qualquer momento em <b>Pessoas e acesso</b>.</div>
+      </div>
+
+      <!-- TELA FINAL -->
+      <div class="step" id="finalStep" style="text-align:center;">
+        <div style="font-size:3rem;margin-bottom:8px;">🎉</div>
+        <h2 style="font-size:1.5rem;margin-bottom:10px;">Tutorial concluído!</h2>
+        <p style="color:var(--cinza);max-width:420px;margin:0 auto 24px;">Você concedeu acesso ao gestor. Lembre-se: ele precisa <b>aceitar o convite por e-mail</b> para o acesso ficar ativo.</p>
+        <button class="btn-next" onclick="restart()" style="font-size:.95rem;font-weight:600;padding:12px 26px;border-radius:24px;border:none;cursor:pointer;background:var(--tango);color:#fff;">↺ Voltar ao início</button>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="nav">
+    <button class="btn-back" id="back" onclick="go(-1)" disabled>← Voltar</button>
+    <div class="dots" id="dots"></div>
+    <button class="btn-next" id="next" onclick="go(1)">Próximo →</button>
+  </div>
+
+<script>
+  const finalStep = document.getElementById('finalStep');
+  const steps = [...document.querySelectorAll('.step')].filter(s => s !== finalStep);
+  const total = steps.length;
+  let cur = 0;
+  const bar = document.getElementById('bar');
+  const label = document.getElementById('stepLabel');
+  const back = document.getElementById('back');
+  const next = document.getElementById('next');
+  const dots = document.getElementById('dots');
+  const nav = document.querySelector('.nav');
+  const progress = document.querySelector('.progress-wrap');
+
+  // build dots
+  steps.forEach((_, i) => {
+    const d = document.createElement('span');
+    d.onclick = () => show(i);
+    dots.appendChild(d);
+  });
+
+  function show(i){
+    finalStep.classList.remove('active');
+    nav.style.display = 'flex';
+    progress.style.display = 'block';
+    cur = Math.max(0, Math.min(total - 1, i));
+    steps.forEach((s, idx) => s.classList.toggle('active', idx === cur));
+    bar.style.width = ((cur + 1) / total * 100) + '%';
+    label.textContent = `Etapa ${cur + 1} de ${total}`;
+    back.disabled = cur === 0;
+    next.textContent = cur === total - 1 ? 'Concluir ✓' : 'Próximo →';
+    [...dots.children].forEach((d, idx) => d.classList.toggle('on', idx === cur));
+  }
+  function finish(){
+    steps.forEach(s => s.classList.remove('active'));
+    finalStep.classList.add('active');
+    bar.style.width = '100%';
+    nav.style.display = 'none';        // esconde Voltar/Próximo
+    progress.style.display = 'none';    // esconde barra de progresso
+  }
+  function restart(){ show(0); }
+  function go(dir){
+    if (dir === 1 && cur === total - 1) { finish(); return; }
+    show(cur + dir);
+  }
+
+  // clicar no ponto destacado (hotspot) vai IMEDIATAMENTE para o próximo passo
+  steps.forEach((step, idx) => {
+    step.querySelectorAll('.hot').forEach(hot => {
+      hot.addEventListener('click', e => {
+        e.preventDefault();   // não abre aba nenhuma
+        if (idx === cur) go(1);
+      });
+    });
+  });
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight') go(1);
+    if (e.key === 'ArrowLeft') go(-1);
+  });
+  show(0);
+</script>
+
+</body>
+</html>
