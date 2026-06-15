@@ -7,6 +7,7 @@
 <style>
   :root {
     --tango: #2567ec;
+    --laranja: #f15a2b;
     --texto: #1c2b3a;
     --cinza: #6b7785;
     --linha: #e6e9ee;
@@ -69,6 +70,9 @@
   .browser-bar i:nth-child(3){background:#28c840}
   .url { margin-left:10px; background:#fff; border:1px solid var(--linha); border-radius:20px; padding:3px 14px; font-size:.74rem; color:var(--cinza); flex:1; }
   .screen { background:#fff; padding:26px; min-height:150px; position:relative; }
+  .shot img { display:block; width:100%; height:auto; }
+  a.shot { text-decoration:none; }
+  a.shot:hover { box-shadow:0 4px 16px rgba(241,90,43,.25); }
 
   .gline { height:12px; background:#eef1f5; border-radius:6px; margin:9px 0; }
   .gline.s{width:45%} .gline.m{width:70%} .gline.l{width:90%}
@@ -80,14 +84,28 @@
   .gchip { padding:6px 12px; border:1px solid var(--linha); border-radius:8px; font-size:.82rem; }
   .gchip.sel { border-color:var(--tango); background:#eef3fe; color:var(--tango); font-weight:600; }
 
-  .spot { position:absolute; border:3px solid var(--tango); border-radius:10px; box-shadow:0 0 0 4px rgba(37,103,236,.18); pointer-events:none; animation: pulse 1.6s infinite; }
+  /* destaque LARANJA estilo Tango (igual à imagem base) */
+  .spot { position:absolute; border:2px solid var(--laranja); border-radius:10px; box-shadow:0 0 0 4px rgba(241,90,43,.15); pointer-events:none; animation: pulse 1.6s infinite; }
   .spot.circle { border-radius:50%; }
-  @keyframes pulse { 0%,100%{box-shadow:0 0 0 4px rgba(37,103,236,.18);} 50%{box-shadow:0 0 0 9px rgba(37,103,236,.05);} }
+  @keyframes pulse { 0%,100%{box-shadow:0 0 0 4px rgba(241,90,43,.15);} 50%{box-shadow:0 0 0 9px rgba(241,90,43,.05);} }
 
   .hot { position:relative; display:inline-block; text-decoration:none; color:inherit; cursor:pointer; }
   .hot:hover .gbtn { background:#1850c4; }
-  .hint { display:block; margin-top:12px; font-size:.82rem; color:var(--tango); font-weight:600; }
-  .hint::before { content:"👆 "; }
+
+  /* balão escuro (tooltip) igual à imagem base */
+  .hint {
+    display:block; position:relative;
+    margin:22px auto 4px; max-width:520px;
+    background:#1d2430; color:#fff;
+    padding:14px 18px; border-radius:12px;
+    font-size:.9rem; font-weight:600; line-height:1.45;
+    box-shadow:0 6px 18px rgba(18,38,63,.18);
+  }
+  .hint::before {
+    content:""; position:absolute; top:-9px; left:50%; transform:translateX(-50%);
+    border-left:9px solid transparent; border-right:9px solid transparent;
+    border-bottom:9px solid #1d2430;
+  }
 
   .callout { margin-top:16px; padding:12px 16px; border-radius:10px; font-size:.88rem; }
   .callout.warn { background:#fff7e6; border:1px solid #ffe2a8; color:#8a6100; }
@@ -187,22 +205,15 @@
       <div class="step active">
         <div class="step-head">
           <div class="step-num">1</div>
-          <div class="step-text">Acesse <b>business.google.com</b> e faça login com a conta <b>dona</b> do perfil.
-            <span class="sub">Se você gerencia mais de uma empresa, clique na que deseja editar.</span>
+          <div class="step-text">Pesquise o nome da sua empresa no <b>Google</b> (logado na conta dona) — ou acesse <b>business.google.com</b>.
+            <span class="sub">Neste exemplo usamos a busca por "dentista" para exemplificar.</span>
           </div>
         </div>
-        <div class="shot">
-          <div class="browser-bar"><i></i><i></i><i></i><span class="url">business.google.com</span></div>
-          <div class="screen">
-            <div class="gline l"></div>
-            <div class="gline m"></div>
-            <a class="hot" href="https://business.google.com" target="_blank" style="margin-top:18px;">
-              <span class="gbtn">Fazer login</span>
-              <div class="spot" style="top:-7px;left:-7px;right:-7px;bottom:-7px;"></div>
-            </a>
-          </div>
-        </div>
-        <span class="hint">Clique para abrir business.google.com</span>
+        <a class="hot shot" href="https://business.google.com" target="_blank" style="display:block;">
+          <div class="browser-bar"><i></i><i></i><i></i><span class="url">google.com</span></div>
+          <img src="gbp-base.png" alt="Busca do Google por dentista, exemplo do Perfil da Empresa">
+        </a>
+        <span class="hint">Pesquise sua empresa no Google para encontrar o Perfil da Empresa</span>
       </div>
 
       <!-- STEP 2 -->
